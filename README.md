@@ -10,6 +10,7 @@
 7) Use `gcloud auth login && gcloud auth application-default login && gcloud config set project [PROJECT]` to initialize access to your project.
 8) Run `terraform init && terraform apply`. Provide your project ID and already **existing** bucket for Terraform state. Terraform will create an additional bucket, and a service account with RW permissions for this bucket.  
    Note: While creating Databricks cluster don't forget in "Advanced options" to provide created service account to be able to access GCS bucket. Be vary of quotas when creating a cluster. It is possible that you might have to increase additional quotas if you plan on creating cluster, larger than the smallest one.
-9) Don't forget to `terraform destroy` your resources, to delete your Workspace and to unsubscribe from Databricks after concluding all tutorials.
+9) Don't forget to `terraform destroy` your resources, to delete your Workspace and to unsubscribe from Databricks after concluding all tutorials.  
+   Note: Each Databricks Workspace requires 3-node K8S clusters, so be sure that your Workspace does not exist when you're not using it, since Google will bill you for the Compute Engine costs **even if Workspace exists idly**.
 10) Copy notebook and data into Databricks cluster
 11) Execute all the steps from "ML End-to-End Example" notebook
