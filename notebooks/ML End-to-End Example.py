@@ -21,6 +21,10 @@
 
 # COMMAND ----------
 
+# MAGIC %pip install cloudpickle
+
+# COMMAND ----------
+
 # These commands are only required if you are using a cluster running DBR 7.3 LTS ML or below. 
 import cloudpickle
 assert cloudpickle.__version__ >= "1.4.0", "Update the cloudpickle library using `%pip install --upgrade cloudpickle`"
@@ -51,8 +55,8 @@ assert cloudpickle.__version__ >= "1.4.0", "Update the cloudpickle library using
 import pandas as pd
 
 # In the following lines, replace <username> with your username.
-white_wine = pd.read_csv("/dbfs/FileStore/shared_uploads/<username>/winequality_white.csv", sep=';')
-red_wine = pd.read_csv("/dbfs/FileStore/shared_uploads/<username>/winequality_red.csv", sep=';')
+white_wine = pd.read_csv("/dbfs/FileStore/shared_uploads/testowyepamer@gmail.com/winequality_white.csv", sep=';')
+red_wine = pd.read_csv("/dbfs/FileStore/shared_uploads/testowyepamer@gmail.com/winequality_red.csv", sep=';')
 
 # If you do not have the File > Upload Data menu option, uncomment and run these lines to load the dataset.
 
@@ -114,15 +118,15 @@ import matplotlib.pyplot as plt
 dims = (3, 4)
 
 f, axes = plt.subplots(dims[0], dims[1], figsize=(25, 15))
-axis_i, axis_j = 0, 0
+axis_y, axis_x = 0, 0
 for col in data.columns:
   if col == 'is_red' or col == 'quality':
     continue # Box plots cannot be used on indicator variables
-  sns.boxplot(x=high_quality, y=data[col], ax=axes[axis_i, axis_j])
-  axis_j += 1
-  if axis_j == dims[1]:
-    axis_i += 1
-    axis_j = 0
+  sns.boxplot(x=high_quality, y=data[col], ax=axes[axis_y, axis_x])
+  axis_x += 1
+  if axis_x == dims[1]:
+    axis_y += 1
+    axis_x = 0
 
 # COMMAND ----------
 
@@ -246,6 +250,7 @@ feature_importances.sort_values('importance', ascending=False)
 # COMMAND ----------
 
 run_id = mlflow.search_runs(filter_string='tags.mlflow.runName = "untuned_random_forest"').iloc[0].run_id
+run_id
 
 # COMMAND ----------
 
@@ -344,8 +349,7 @@ with mlflow.start_run(run_name='xgboost_models'):
     space=search_space, 
     algo=tpe.suggest, 
     max_evals=96,
-    trials=spark_trials, 
-    rstate=np.random.RandomState(123)
+    trials=spark_trials
   )
 
 # COMMAND ----------
@@ -434,7 +438,7 @@ print(f'AUC: {roc_auc_score(y_test, model.predict(X_test))}')
 # In the real world, this would be a new batch of data.
 spark_df = spark.createDataFrame(X_train)
 # Replace <username> with your username before running this cell.
-table_path = "dbfs:/<username>/delta/wine_data"
+table_path = "dbfs:/testowyepamer@gmail.com/delta/wine_data"
 # Delete the contents of this path in case this cell has already been run
 dbutils.fs.rm(table_path, True)
 spark_df.write.format("delta").save(table_path)
@@ -492,7 +496,7 @@ display(new_data)
 # COMMAND ----------
 
 import os
-os.environ["DATABRICKS_TOKEN"] = "<YOUR_TOKEN>"
+os.environ["DATABRICKS_TOKEN"] = "dapica0a7419ce3a830941942808380ca4b0"
 
 # COMMAND ----------
 
@@ -505,16 +509,22 @@ os.environ["DATABRICKS_TOKEN"] = "<YOUR_TOKEN>"
 
 # COMMAND ----------
 
-# Replace with code snippet from the model serving page
+
 import os
 import requests
+import numpy as np
 import pandas as pd
+import json
 
-def score_model(dataset: pd.DataFrame):
-  url = 'https://<DATABRICKS_URL>/model/wine_quality/Production/invocations'
-  headers = {'Authorization': f'Bearer {os.environ.get("DATABRICKS_TOKEN")}'}
-  data_json = dataset.to_dict(orient='split')
-  response = requests.request(method='POST', headers=headers, url=url, json=data_json)
+def create_tf_serving_json(data):
+  return {'inputs': {name: data[name].tolist() for name in data.keys()} if isinstance(data, dict) else data.tolist()}
+
+def score_model(dataset):
+  url = 'https://1028934720835617.7.gcp.databricks.com/model/wine_quality/2/invocations'
+  headers = {'Authorization': f'Bearer {os.environ.get("DATABRICKS_TOKEN")}', 'Content-Type': 'application/json'}
+  ds_dict = dataset.to_dict(orient='split') if isinstance(dataset, pd.DataFrame) else create_tf_serving_json(dataset)
+  data_json = json.dumps(ds_dict, allow_nan=True)
+  response = requests.request(method='POST', headers=headers, url=url, data=data_json)
   if response.status_code != 200:
     raise Exception(f'Request failed with status {response.status_code}, {response.text}')
   return response.json()
