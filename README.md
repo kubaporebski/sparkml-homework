@@ -1,5 +1,44 @@
 # Spark Machine Learning Homework
 
+## Screenshots from following the notebook steps
+
+* Cloudpickle installation
+
+![](docs/install_cloudpickle.png)
+
+* Importing data into DBFS and preparing it was done correctly. Resulting pandas dataset:
+
+![](docs/pandas_data_ready.png)
+
+* How's quality of wine distributed? Histogram shows it:
+
+![](docs/plot_quality.png)
+
+* Independent variables vs. dependent variable, visualized in a series of plots:
+
+![](docs/lots_of_plots.png)
+* 
+* Let's train dataset and run machine learning.
+* After ML training, we know what features have most impact on the wine quality. Let's check:
+
+![](docs/feature_importances.png)
+
+* After training, we can register a resulting model.
+
+![](docs/model_registered.png)
+
+* We can promote this model to a production stage.
+
+![](docs/model_production_stage.png)
+
+* What is AUC (area under curve) of that registered model?
+
+![](docs/registered_production_model_auc.png)
+
+* Now, onto the advanced features of Machine Learning. Let's try a hyperparameter sweep.
+
+![](docs/hyperparameter_sweep_in_a_run.png)
+
 
 ---
 Instructions provided:
