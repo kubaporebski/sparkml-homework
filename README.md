@@ -6,7 +6,9 @@
 
 ![](docs/install_cloudpickle.png)
 
-* Importing data into DBFS and preparing it was done correctly. Resulting pandas dataset:
+* Importing data into DBFS and preparing it was done correctly. I followed instructions and uploaded data via Databricks UI.  
+* So this time, there was no need for another Google Cloud bucket, I didn't have to use `terraform`.
+* Here you can see the resulting pandas dataset:
 
 ![](docs/pandas_data_ready.png)
 
@@ -14,11 +16,13 @@
 
 ![](docs/plot_quality.png)
 
+* In the dataset independent variables are variables used to predict a dependent variable. So, we use `fixed_acidity`, `citric_acid`, `density`, `pH`, `alcohol`, etc. 
+to predict dependent variable with name `quality`.
 * Independent variables vs. dependent variable, visualized in a series of plots:
 
 ![](docs/lots_of_plots.png)
 * 
-* Let's train dataset and run machine learning.
+* Let's train dataset and run machine learning. We're using `MLFlow` framework to do it.
 * After ML training, we know what features have most impact on the wine quality. Let's check:
 
 ![](docs/feature_importances.png)
@@ -47,7 +51,7 @@
 
 ![](docs/new_version_of_model_promoted.png)
 
-* We can serve this model as well.
+* We can serve this model - the newest version of it - as well.
 
 ![](docs/model_serving.png)
 
